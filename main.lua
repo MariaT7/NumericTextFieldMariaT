@@ -6,10 +6,10 @@
 -----Change background#####################################
 ---------------------------------------------------------------------------------------------------
 
---hide the status bar
+-- Hide the status bar
 display.setStatusBar(display.HiddenStatusBar)
 
--- background image with width and height
+-- Background image with width and height
 local backgroundImage = display.newImageRect("Images/background.png", 2048, 1536)
 
 --------------------------------------------------------------------------------------
@@ -19,6 +19,7 @@ local backgroundImage = display.newImageRect("Images/background.png", 2048, 1536
 -- create local variables
 local questionObject
 local questionObject2
+local questionObject3
 local correctObject
 local incorrectObject
 local numericField
@@ -38,28 +39,29 @@ local pointsObject
 ---------------------------------------------------------------------------
 
 local function AskQuestion()
-	-- generate 2 random numbers betweeen a max. and a min. number
+	-- Generate 2 random numbers betweeen a max. and a min. number
 	randomNumber1 = math.random(10, 20)
 	randomNumber2 = math.random(10, 20)
 	randomNumber3 = math.random(10, 20)
 	randomOperator = math.random(1, 3)
 
-	if randomOperator == 1 then
+	if (randomOperator == 1) then
 		correctAnswer = randomNumber1 + randomNumber2
+		-- Create question in a text object
+		questionObject.text = randomNumber1 .. "+" .. randomNumber2 .. "="
 
-	elseif randomOperator == 2 then
-		correctAnswer = randomNumber2 * randomNumber2
+	elseif (randomOperator == 2) then
+		correctAnswer = randomNumber1 * randomNumber2
+		questionObject2.text = randomNumber1 .. "*" .. randomNumber2 .. "="
+		timer.performWithDelay(1500, HidequestionObject2)
 
-	elseif randomOperator == 3 then 
-		correctAnswer = randomNumber3
+	elseif (randomOperator == 3) then 
+		correctAnswer = randomNumber1 - randomNumber2
+		questionObject3.text = randomNumber1 .. "-" .. randomNumber2 .. "="
 	end
 end
 
 
-
-	-- create question in a text object 
-	questionObject.text = randomNumber1 .. "+" .. randomNumber2 .. "="
-	questionObject2.text = randomNumber1 .. "*" .. randomNumber2 .. "="
 
 
 local function HideCorrect()
@@ -72,20 +74,23 @@ local function Hideincorrect()
 	AskQuestion()
 end
 
+
+
+
 local function NumericFieldListener( event )
 
 	-- User begins editing "numericField"
 	if ( event.phase == "began" ) then
 
-		-- clear text field
+		-- Clear text field
 		event.target.text = ""
 
 	elseif event.phase == "submitted" then
 
-		-- when the answer is submitted (enter key is pressed) set user input to user's answer
+		-- When the answer is submitted (enter key is pressed) set user input to user's answer
 		userAnswer = tonumber(event.target.text)
 
-		-- if the users answer and the correct answer are the same:
+		-- If the users answer and the correct answer are the same:
 		if (userAnswer == correctAnswer) then
 			correctObject.isVisible = true
 			timer.performWithDelay(1500, HideCorrect)
@@ -93,17 +98,8 @@ local function NumericFieldListener( event )
 			elseif (userAnswer ~= correctAnswer) then
 				incorrectObject.isVisible = true
 				timer.performWithDelay(1500, Hideincorrect)
-
-		if (userAnswer == correctAnswer2) then
-			correctObject.isVisible = true
-			timer.performWithDelay(1500, HideCorrect)
-
-			elseif (userAnswer ~= correctAnswer2) then
-				incorrectObject.isVisible = true
-				timer.performWithDelay(1500, Hideincorrect)
 			end
-
-		end
+		
 	end
 end
 
@@ -111,12 +107,16 @@ end
 -- OBJECT CREATION
 --------------------------------------------------------------------------------------
 
--- displays a question and sets the colour
+-- Displays a question and sets the colour
 questionObject = display.newText( "", display.contentWidth/2.75, display.contentHeight/2, nil, 110 )
 questionObject:setTextColor(155/255, 42/255, 198/255)
 
+-- Displays a question and sets the colour
+questionObject2 = display.newText( "", display.contentWidth/2.75, display.contentHeight/2, nil, 110 )
+questionObject:setTextColor(155/255, 42/255, 198/255)
 
--- create the correct text object and make it invisible
+
+-- Create the correct text object and make it invisible
 correctObject = display.newText( "Correct!", display.contentWidth/2, display.contentHeight*2/3, nil, 50 )
 correctObject:setTextColor(50/255, 233/255, 10/255)
 correctObject.isVisible = false
@@ -125,12 +125,12 @@ correctObject.isVisible = false
 numericField = native.newTextField( display.contentWidth/1.5, display.contentHeight/2, 190, 120 )
 numericField.inputType = "number"
 
--- add the event listener for the numberic field
+-- Add the event listener for the numberic field
 numericField:addEventListener( "userInput", NumericFieldListener )
 
 ------------
 
--- create the correct text object and make it invisible
+-- Create the correct text object and make it invisible
 incorrectObject = display.newText( "Incorrect!", display.contentWidth/2, display.contentHeight*2/3, nil, 50 )
 incorrectObject:setTextColor(241/255, 62/255, 62/255)
 incorrectObject.isVisible = false
@@ -140,5 +140,5 @@ incorrectObject.isVisible = false
 -- FUNCTION CALLS
 -------------------------------------------------------------------------------
 
--- call the function to ask the question
+-- Call the function to ask the question
 AskQuestion()
